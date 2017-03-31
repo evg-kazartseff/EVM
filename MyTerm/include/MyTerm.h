@@ -14,10 +14,15 @@
 
 
 #define OK                  0
-#define ERR_PRINT           -1
-#define ERR_IO_CONTROL      -2
-#define ERR_SCREEN_SIZE     -3
-#define ERR_SCREEN_COLOR    -4
+#define ERR_PRINT           -7
+#define ERR_IO_CONTROL      -8
+#define ERR_SCREEN_SIZE     -9
+#define ERR_SCREEN_COLOR    -10
+
+#define CLRSCR "\E[H\E[2J"
+#define GOTOXY "\E[%d;%dH"
+#define FGCOLOR "\E[3%dm"
+#define BGCOLOR "\E[4%dm"
 
 typedef enum {
     clr_black,
