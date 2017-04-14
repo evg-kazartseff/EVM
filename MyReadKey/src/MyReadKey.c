@@ -133,6 +133,11 @@ int rk_mytermregime(int regime, cc_t vtime, cc_t vmin, int echo, int sigint)
     }
     if (regime == 1) {
         options.c_lflag |= ICANON;
+        if (echo == 1) {
+            options.c_lflag |= ECHO;
+        } else if (echo == 0) {
+            options.c_lflag &= ~ECHO;
+        }
     } else if (regime == 0) {
         options.c_lflag &= ~ICANON;
     } else {

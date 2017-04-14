@@ -42,38 +42,49 @@ int draw_interface(void) {
     int flg = 0;
     flg = mt_getscreensize(&y_max, &x_max);
     if (flg != OK) {
-        //return ERR_SCREEN_SIZE;
+        return ERR_SCREEN_SIZE;
     }
-    if ((x_max < 120) || (y_max < 30)) {
+    if ((x_max < 82) || (y_max < 31)) {
         write(STDOUT_FILENO, "ERR_SCREEN_SIZE", strlen("ERR_SCREEN_SIZE"));
-        //return ERR_SCREEN_SIZE;
+        return ERR_SCREEN_SIZE;
     }
-
     Load_BIG_CHAR();
-
     draw_operation(0);
-    draw_memory();
+    uint place_x = 0;
+    uint place_y = 0;
+    draw_memory(place_x, place_y);
     draw_accumulator();
     draw_instructionCounter();
     draw_flag();
-    draw_bigchar(10);
+    draw_bigchar(0);
     draw_keys();
-    mt_gotoXY(1, (uint16_t) (y_max - 1));
+    draw_IO();
+    goto_console();
     return 0;
 }
 
-int draw_memory(void) {
+int draw_memory(uint x_curent, uint y_current) {
     int flg;
     mt_gotoXY(2, 2);
     for (int i = 0; i < 10; ++i) {
         uint x = (uint) (i * 10);
         for (int j = 0; j < 10; ++j) {
             uint y = (uint) j;
-            char buf[6];
+            char buf[10];
             int_least16_t value;
             sc_memoryGet(x + y, &value);
             print_memory_cell(buf, value);
-            write(STDOUT_FILENO, buf, strlen(buf));
+            if ((i == x_curent) && (j == y_current)) {
+                mt_setbgcolor(clr_green);
+                mt_setfgcolor(clr_red);
+
+            }
+            write(STDOUT_FILENO, buf,
+                  strlen(buf));
+            if ((i == x_curent) && (j == y_current)) {
+                mt_setbgcolor(clr_default);
+                mt_setfgcolor(clr_default);
+            }
             write(STDOUT_FILENO, " ", 1);
         }
         write(STDOUT_FILENO, "\n ", strlen("\n "));
@@ -84,14 +95,20 @@ int draw_memory(void) {
     }
     mt_gotoXY(29, 1);
     write(STDOUT_FILENO, "Memory", strlen("Memory"));
+    goto_console();
     return OK;
 }
 
-int print_memory_cell(char * buf, int_least16_t cell) {
+int print_memory_cell(char *buf, int_least16_t cell) {
     if ((cell & (1 << 14)) != 0) {
         char value;
         sc_valueDecode(&value, cell);
-        sprintf(buf, "+%.4x", value);
+        if (value >= 0)
+            sprintf(buf, "+%.4x", value);
+        else {
+            value = (char) abs(value);
+            sprintf(buf, "-%.4x", value);
+        }
     }
     else {
         char comand;
@@ -106,10 +123,12 @@ int draw_accumulator(void) {
     bc_box(62, 1, 20, 3);
     mt_gotoXY(69, 2);
     char buf[6];
-    sprintf(buf, "+%.4d", Accumulator);
+    print_memory_cell(buf, Accumulator);
+    //sprintf(buf, "+%.4x", Accumulator);
     write(STDOUT_FILENO, buf, 6);
     mt_gotoXY(66, 1);
     write(STDOUT_FILENO, "Accumulator", strlen("Accumulator"));
+    goto_console();
     return OK;
 }
 
@@ -121,6 +140,7 @@ int draw_instructionCounter(void) {
     write(STDOUT_FILENO, buf, 6);
     mt_gotoXY(63, 4);
     write(STDOUT_FILENO, "InctructionCounter", strlen("InctructionCounter"));
+    goto_console();
     return OK;
 }
 
@@ -130,10 +150,15 @@ int draw_operation(int address) {
     char buf[6];
     int_least16_t cell;
     sc_memoryGet(address, &cell);
-    print_memory_cell(buf, cell);
+    if(sc_it_command(cell)) {
+        print_memory_cell(buf, cell);
+    } else {
+        print_memory_cell(buf, 0);
+    }
     write(STDOUT_FILENO, buf, 6);
     mt_gotoXY(67, 7);
     write(STDOUT_FILENO, "Operation", strlen("Operation"));
+    goto_console();
     return OK;
 }
 
@@ -168,6 +193,7 @@ int draw_flag(void) {
     }
     mt_gotoXY(64, 11);
     write(STDOUT_FILENO, buf, strlen(buf));
+    goto_console();
     return OK;
 }
 
@@ -280,6 +306,7 @@ int draw_bigchar(int address) {
             }
         }
     }
+    goto_console();
     return OK;
 }
 
@@ -301,11 +328,25 @@ int draw_keys(void) {
     write(STDOUT_FILENO, "f5 - accumulator", strlen("f5 - accumulator"));
     mt_gotoXY(53, 20);
     write(STDOUT_FILENO, "f6 - instructionCounter", strlen("f5 - instructionCounter"));
+    goto_console();
     return 0;
 }
 
 int draw_IO(void) {
-    bc_box()
+    bc_box(1, 23, 81, 8);
+    mt_gotoXY(3, 23);
+    write(STDOUT_FILENO, "I/O", strlen("I/O"));
+    for (int i = 0; i < 6; ++i) {
+        mt_gotoXY(2, (uint16_t) (24 + i));
+        for (int j = 1; j < 79; ++j) {
+            write(STDOUT_FILENO, " ", 1);
+        }
+        mt_gotoXY(2, (uint16_t) (24 + i));
+        if (IO[i] != NULL) {
+            write(STDOUT_FILENO, IO[i], strlen(IO[i]));
+        }
+    }
+    goto_console();
     return 0;
 }
 
@@ -551,4 +592,48 @@ int write_big_char() {
     bc_bigcharwrite(file, array_big, count);
     close(file);
     return OK;
+}
+
+int goto_console() {
+    uint num = get_num_string_IO();
+    mt_gotoXY(2, (uint16_t) (24 + num));
+    return 0;
+}
+
+int draw_load_cell() {
+    mt_setbgcolor(clr_cyan);
+    mt_setfgcolor(clr_red);
+    bc_box(20, 5, 23, 6);
+    for (uint16_t i = 6; i < 10; ++i) {
+        for (uint16_t j = 21; j < 42; ++j) {
+            mt_gotoXY(j, i);
+            write(STDOUT_FILENO, " ", 1);
+        }
+    }
+    mt_gotoXY(22, 6);
+    write(STDOUT_FILENO, "Enter Value", strlen("Enter value"));
+    bc_box(21, 7, 21, 3);
+    mt_gotoXY(22, 8);
+    mt_setfgcolor(clr_default);
+    mt_setbgcolor(clr_default);
+    return 0;
+}
+
+int draw_load_save_memory() {
+    mt_setbgcolor(clr_cyan);
+    mt_setfgcolor(clr_red);
+    bc_box(10, 5, 50, 6);
+    for (uint16_t j = 6; j < 10; ++j) {
+        for (uint16_t i = 11; i < 59; ++i) {
+            mt_gotoXY(i, j);
+            write(STDOUT_FILENO, " ", 1);
+        }
+    }
+    mt_gotoXY(14, 6);
+    write(STDOUT_FILENO, "Please specify the path to the memory file!", strlen("Please specify the path to the memory file!"));
+    bc_box(15, 7, 40, 3);
+    mt_gotoXY(16, 8);
+    mt_setfgcolor(clr_default);
+    mt_setbgcolor(clr_default);
+    return 0;
 }
