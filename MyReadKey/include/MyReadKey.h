@@ -27,7 +27,7 @@ typedef enum {
     KEY_r,
     KEY_t,
     KEY_i,
-    KEY_x,
+    KEY_p,
     KEY_d,
     KEY_q,
     KEY_f5,

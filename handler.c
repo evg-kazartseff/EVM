@@ -3,8 +3,9 @@
 //
 
 #include "handler.h"
+#include "draw_interface.h"
 
-void handler_key(keys key, uint *place_x, uint *place_y)
+void handler_key(keys key)
 {
     switch (key) {
         case KEY_l:
@@ -14,44 +15,47 @@ void handler_key(keys key, uint *place_x, uint *place_y)
             handler_save();
             break;
         case KEY_r:
+            handler_run();
             break;
         case KEY_t:
+            handler_step();
             break;
         case KEY_i:
+            handler_reset();
             break;
         case KEY_q:
             break;
         case KEY_up:
-            *place_x -= 1;
-            if (*place_x == -1) {
-                *place_x = 9;
+            place_cell_memory.x -= 1;
+            if (place_cell_memory.x == -1) {
+                place_cell_memory.x = 9;
             }
-            draw_memory(*place_x, *place_y);
-            draw_bigchar(*place_x * 10 + *place_y);
+            draw_memory(place_cell_memory.x, place_cell_memory.y);
+            draw_bigchar(place_cell_memory.x * 10 + place_cell_memory.y);
             break;
         case KEY_down:
-            *place_x += 1;
-            if (*place_x == 10) {
-                *place_x = 0;
+            place_cell_memory.x += 1;
+            if (place_cell_memory.x == 10) {
+                place_cell_memory.x = 0;
             }
-            draw_memory(*place_x, *place_y);
-            draw_bigchar(*place_x * 10 + *place_y);
+            draw_memory(place_cell_memory.x, place_cell_memory.y);
+            draw_bigchar(place_cell_memory.x * 10 + place_cell_memory.y);
             break;
         case KEY_left:
-            *place_y -= 1;
-            if (*place_y == -1) {
-                *place_y = 9;
+            place_cell_memory.y -= 1;
+            if (place_cell_memory.y == -1) {
+                place_cell_memory.y = 9;
             }
-            draw_memory(*place_x, *place_y);
-            draw_bigchar(*place_x * 10 + *place_y);
+            draw_memory(place_cell_memory.x, place_cell_memory.y);
+            draw_bigchar(place_cell_memory.x * 10 + place_cell_memory.y);
             break;
         case KEY_right:
-            *place_y += 1;
-            if (*place_y == 10) {
-                *place_y = 0;
+            place_cell_memory.y += 1;
+            if (place_cell_memory.y == 10) {
+                place_cell_memory.y = 0;
             }
-            draw_memory(*place_x, *place_y);
-            draw_bigchar(*place_x * 10 + *place_y);
+            draw_memory(place_cell_memory.x, place_cell_memory.y);
+            draw_bigchar(place_cell_memory.x * 10 + place_cell_memory.y);
             break;
         case KEY_f5:
             handler_loud_accumulation();
@@ -59,10 +63,12 @@ void handler_key(keys key, uint *place_x, uint *place_y)
         case KEY_f6:
             handler_loud_instr_coutner();
             break;
-        case KEY_x:break;
+        case KEY_p:
+            handler_II();
+            break;
         case KEY_d:break;
         case KEY_enter:
-            handler_loud_cell_memory(*place_x, *place_y);
+            handler_loud_cell_memory(place_cell_memory.x, place_cell_memory.y);
             break;
         case KEY_other:break;
     }
@@ -72,12 +78,12 @@ void handler_key(keys key, uint *place_x, uint *place_y)
 int main_term()
 {
     keys key;
-    uint place_x = 0;
-    uint place_y = 0;
+    place_cell_memory.x = 0;
+    place_cell_memory.y = 0;
     rk_mytermsave();
     do {
         rk_readkey(&key);
-        handler_key(key, &place_x, &place_y);
+        handler_key(key);
     } while (key != KEY_q);
     rk_mytermrestore();
     uint16_t max_x, max_y;
@@ -87,6 +93,7 @@ int main_term()
 }
 
 void handler_loud() {
+    place_pointer.replace_pointer = 1;
     draw_load_save_memory();
     char *buf;
     buf = read_console();
@@ -103,10 +110,12 @@ void handler_loud() {
         free(buf);
     }
     draw_interface();
+    place_pointer.replace_pointer = 0;
     return;
 }
 
 void handler_save() {
+    place_pointer.replace_pointer = 1;
     draw_load_save_memory();
     char *buf;
     buf = read_console();
@@ -123,10 +132,12 @@ void handler_save() {
         free(buf);
     }
     draw_interface();
+    place_pointer.replace_pointer = 0;
     return;
 }
 
 void handler_loud_cell_memory(uint place_x, uint place_y) {
+    place_pointer.replace_pointer = 1;
     draw_load_cell();
     char *buf;
     buf = read_console();
@@ -150,6 +161,7 @@ void handler_loud_cell_memory(uint place_x, uint place_y) {
         free(buf);
     }
     draw_interface();
+    place_pointer.replace_pointer = 0;
     return;
 }
 
@@ -194,6 +206,7 @@ int decod_val_com(char *buf, int_least16_t *cell) {
 }
 
 void handler_loud_accumulation() {
+    place_pointer.replace_pointer = 1;
     draw_load_cell();
     char *buf;
     buf = read_console();
@@ -214,6 +227,7 @@ void handler_loud_accumulation() {
         free(buf);
     }
     draw_interface();
+    place_pointer.replace_pointer = 0;
     return;
 }
 
@@ -237,6 +251,7 @@ int decod_val(char *buf, int_least16_t *cell) {
 }
 
 void handler_loud_instr_coutner() {
+    place_pointer.replace_pointer = 1;
     draw_load_cell();
     char *buf;
     buf = read_console();
@@ -257,5 +272,33 @@ void handler_loud_instr_coutner() {
         free(buf);
     }
     draw_interface();
+    place_pointer.replace_pointer = 0;
     return;
+}
+
+void handler_reset() {
+    raise(SIGUSR1);
+}
+
+void handler_run() {
+    sc_regSet(FLAG_IGNORE_IMP, 0);
+    draw_flag();
+    start_timer();
+}
+
+void handler_step() {
+    sc_regSet(FLAG_IGNORE_IMP, 0);
+    draw_flag();
+    alarm(1);
+}
+
+void handler_II() {
+    int v;
+    sc_regGet(FLAG_IGNORE_IMP, &v);
+    if (v == 0) {
+        sc_regSet(FLAG_IGNORE_IMP, 1);
+    } else if (v == 1) {
+        sc_regSet(FLAG_IGNORE_IMP, 0);
+    }
+    draw_flag();
 }

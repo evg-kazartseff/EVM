@@ -4,18 +4,18 @@
 #include "draw_interface.h"
 
 
-int Load_BIG_CHAR(void) {
+int Load_BIG_CHARS(void) {
     int file = open("BIG_CHARS", O_CREAT | O_RDONLY, S_IREAD);
     if (file == -1) {
         perror("Can't open file BIGCHAR\n");
         return -1;
     }
 
-    size_t size = (size_t) (Col_BIG_CHAR * 2);
+    size_t size = (size_t) (Num_BIG_CHAR * 2);
     memset(BigCharsArray, 0, size * sizeof(int32_t));
     lseek(file, 0, SEEK_SET);
     int count;
-    int flg = bc_bigcharread(file, BigCharsArray, Col_BIG_CHAR, &count);
+    int flg = bc_bigcharread(file, BigCharsArray, Num_BIG_CHAR, &count);
     if (flg != OK) {
         write(STDERR_FILENO, "ERR read BIGCHAR\n", strlen("ERR read BIGCHAR\n"));
         return -1;
@@ -48,15 +48,13 @@ int draw_interface(void) {
         write(STDOUT_FILENO, "ERR_SCREEN_SIZE", strlen("ERR_SCREEN_SIZE"));
         return ERR_SCREEN_SIZE;
     }
-    Load_BIG_CHAR();
-    draw_operation(0);
-    uint place_x = 0;
-    uint place_y = 0;
-    draw_memory(place_x, place_y);
+    Load_BIG_CHARS();
+    draw_operation(address_last_comand);
+    draw_memory(place_cell_memory.x, place_cell_memory.y);
     draw_accumulator();
     draw_instructionCounter();
     draw_flag();
-    draw_bigchar(0);
+    draw_bigchar(place_cell_memory.x * 10 + place_cell_memory.y);
     draw_keys();
     draw_IO();
     goto_console();
@@ -104,10 +102,10 @@ int print_memory_cell(char *buf, int_least16_t cell) {
         char value;
         sc_valueDecode(&value, cell);
         if (value >= 0)
-            sprintf(buf, "+%.4x", value);
+            sprintf(buf, "+%.4d", value);
         else {
             value = (char) abs(value);
-            sprintf(buf, "-%.4x", value);
+            sprintf(buf, "-%.4d", value);
         }
     }
     else {
@@ -328,6 +326,8 @@ int draw_keys(void) {
     write(STDOUT_FILENO, "f5 - accumulator", strlen("f5 - accumulator"));
     mt_gotoXY(53, 20);
     write(STDOUT_FILENO, "f6 - instructionCounter", strlen("f5 - instructionCounter"));
+    mt_gotoXY(53, 21);
+    write(STDOUT_FILENO, "p - pause", strlen("p - pause"));
     goto_console();
     return 0;
 }
@@ -595,6 +595,8 @@ int write_big_char() {
 }
 
 int goto_console() {
+    if (place_pointer.replace_pointer)
+        return 0;
     uint num = get_num_string_IO();
     mt_gotoXY(2, (uint16_t) (24 + num));
     return 0;

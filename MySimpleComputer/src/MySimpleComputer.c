@@ -150,3 +150,8 @@ int sc_AccumIniit(void) {
     Accumulator = 0x4000;
     return 0;
 }
+
+int sc_InstractionCounterInit(void) {
+    InctructionCounter = 0;
+    return 0;
+}

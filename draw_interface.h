@@ -12,10 +12,26 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define Col_BIG_CHAR 19
-int32_t BigCharsArray[Col_BIG_CHAR * 2];
+#define Num_BIG_CHAR 19
+int32_t BigCharsArray[Num_BIG_CHAR * 2];
 
-int Load_BIG_CHAR(void);
+
+typedef struct {
+    uint x;
+    uint y;
+    int replace_pointer;
+} pointer;
+pointer place_pointer;
+
+typedef struct {
+uint x;
+uint y;
+} call_memory;
+call_memory place_cell_memory;
+
+int address_last_comand;
+
+int Load_BIG_CHARS(void);
 int fromArrayToBigChar(int32_t *big, char *arr);
 int write_big_char();
 int draw_interface(void);

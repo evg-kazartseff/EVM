@@ -28,7 +28,6 @@
 #define DR_ANGLE_CHAR "j"
 #define TL_ANGLE_CHAR "l"
 #define TR_ANGLE_CHAR "k"
-
 #define ACS_CKBOARD "a"
 
 int bc_printA (const char *str);

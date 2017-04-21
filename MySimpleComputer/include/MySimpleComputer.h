@@ -55,5 +55,6 @@ int sc_valueDecode(char *value, int_least16_t cell);
 bool sc_it_command(int_least16_t cell);
 bool sc_it_value(int_least16_t cell);
 int sc_AccumIniit(void);
+int sc_InstractionCounterInit(void);
 
 #endif

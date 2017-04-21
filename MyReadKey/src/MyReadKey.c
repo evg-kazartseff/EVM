@@ -42,8 +42,8 @@ int rk_readkey(keys *key)
         *key = KEY_i;
     } else  if (strcmp(buf, "q") == 0) {
         *key = KEY_q;
-    } else if (strcmp(buf, "x") == 0) {
-        *key = KEY_x;
+    } else if (strcmp(buf, "p") == 0) {
+        *key = KEY_p;
     } else if (strcmp(buf, "d") == 0) {
         *key = KEY_d;
     } else if (strcmp(buf, "\n") == 0) {
