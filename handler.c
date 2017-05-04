@@ -3,7 +3,7 @@
 //
 
 #include "handler.h"
-#include "draw_interface.h"
+
 
 void handler_key(keys key)
 {
@@ -75,8 +75,9 @@ void handler_key(keys key)
 
 }
 
-int main_term()
+int main_computer()
 {
+    draw_interface();
     keys key;
     place_cell_memory.x = 0;
     place_cell_memory.y = 0;
@@ -170,12 +171,12 @@ int decod_val_com(char *buf, int_least16_t *cell) {
         if (strlen(buf) > 5) {
             return -1;
         }
-        int val = atoi(&buf[1]);
-        if ((val > 127) || (val < -127)) {
+        int_least16_t val = (int_least16_t) atoi(&buf[1]);
+        if ((val >= 0x1fff) || (val <= -0x1fff)) {
             return -1;
         }
 
-        int flg = sc_valueEncode((char) val, cell);
+        int flg = sc_valueEncode(val, cell);
         if (flg != OK) {
             return -1;
         }
@@ -236,11 +237,11 @@ int decod_val(char *buf, int_least16_t *cell) {
         if (strlen(buf) > 5) {
             return -1;
         }
-        int val = atoi(&buf[1]);
-        if ((val > 127) || (val < -127)) {
+        int_least16_t val = (int_least16_t) atoi(&buf[1]);
+        if ((val >= 0x1fff) || (val <= -0x1fff)) {
             return -1;
         }
-        int flg = sc_valueEncode((char) val, cell);
+        int flg = sc_valueEncode(val, cell);
         if (flg != OK) {
             return -1;
         }
@@ -264,7 +265,7 @@ void handler_loud_instr_coutner() {
         int_least16_t val;
         int flg = decod_val(buf, &val);
         if (flg == OK) {
-            InctructionCounter = (int_least8_t) val;
+            InctructionCounter = (uint_least8_t) val;
         }
         else {
             add_messange("Could not set cell value");
@@ -283,13 +284,12 @@ void handler_reset() {
 void handler_run() {
     sc_regSet(FLAG_IGNORE_IMP, 0);
     draw_flag();
-    start_timer();
 }
 
 void handler_step() {
-    sc_regSet(FLAG_IGNORE_IMP, 0);
+    sc_regSet(FLAG_IGNORE_IMP, 1);
     draw_flag();
-    alarm(1);
+    cu();
 }
 
 void handler_II() {

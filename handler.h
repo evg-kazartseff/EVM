@@ -9,6 +9,7 @@
 #include "draw_interface.h"
 #include <signal.h>
 #include "signal.h"
+#include "alu.h"
 
 void handler_run();
 void handler_step();
@@ -20,7 +21,7 @@ void handler_loud_cell_memory(uint place_x, uint place_y);
 void handler_loud_accumulation();
 void handler_loud_instr_coutner();
 void handler_key(keys key);
-int main_term();
+int main_computer();
 
 int decod_val_com(char *buf, int_least16_t *cell);
 int decod_val(char *buf, int_least16_t *cell);

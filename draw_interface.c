@@ -99,20 +99,22 @@ int draw_memory(uint x_curent, uint y_current) {
 
 int print_memory_cell(char *buf, int_least16_t cell) {
     if ((cell & (1 << 14)) != 0) {
-        char value;
+        int_least16_t value;
         sc_valueDecode(&value, cell);
-        if (value >= 0)
+        if (value >= 0) {
+            value ^= 1 << 14;
             sprintf(buf, "+%.4d", value);
+        }
         else {
-            value = (char) abs(value);
-            sprintf(buf, "-%.4d", value);
+            value ^= 0 << 14;
+            sprintf(buf, "%.4d", value);
         }
     }
     else {
         char comand;
         char operand;
         sc_commandDecode(cell, &comand, &operand);
-        sprintf(buf, "%.2x:%.2x", comand, operand);
+        sprintf(buf, "%.2d:%.2d", comand, operand);
     }
     return OK;
 }

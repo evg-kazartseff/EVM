@@ -10,6 +10,7 @@
 #include <zconf.h>
 #include "MySimpleComputer.h"
 #include "draw_interface.h"
+#include "alu.h"
 
 void set_signals();
 void timer_handler(int sig);

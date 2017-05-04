@@ -116,15 +116,15 @@ int sc_commandDecode(int_least16_t value, char *command, char *operand) {
     return OK;
 }
 
-int sc_valueEncode(char value, int_least16_t *cell) {
-    *cell = (int_least16_t) value;
+int sc_valueEncode(int_least16_t value, int_least16_t *cell) {
+    *cell = value;
     *cell |= 1 << 14;
     return OK;
 }
 
-int sc_valueDecode(char *value, int_least16_t cell) {
+int sc_valueDecode(int_least16_t *value, int_least16_t cell) {
     if ((cell & (1 << 14)) != 0) {
-        *value = (char) cell;
+        *value = cell;
     }
     else {
         return ERR_WRONG_VALUE;

@@ -4,7 +4,7 @@
 
 #include "draw_interface.h"
 #include "handler.h"
-#include "signal.h"
+#include "alu.h"
 
 int main() {
     sc_memoryInit();
@@ -12,7 +12,9 @@ int main() {
     sc_AccumIniit();
     sc_InstractionCounterInit();
     set_signals();
-    draw_interface();
-    main_term();
+    table_command_init();
+    sc_regSet(FLAG_IGNORE_IMP, 1);
+    start_timer();
+    main_computer();
     return 0;
 }

@@ -37,7 +37,7 @@ static int_least16_t memory[MEMSIZE];
 
 uint_least8_t RegFlag;
 int_least16_t Accumulator;
-int_least8_t InctructionCounter;
+uint_least16_t InctructionCounter;
 
 int sc_memoryInit(void);
 int sc_memorySet(int address, int_least16_t value);
@@ -50,8 +50,8 @@ int sc_regGet(uint_least8_t reg, int *value);
 int sc_commandEncode(char command, char operand, int_least16_t *value);
 int sc_commandDecode(int_least16_t value, char *command, char *operand);
 
-int sc_valueEncode(char value, int_least16_t *cell);
-int sc_valueDecode(char *value, int_least16_t cell);
+int sc_valueEncode(int_least16_t value, int_least16_t *cell);
+int sc_valueDecode(int_least16_t *value, int_least16_t cell);
 bool sc_it_command(int_least16_t cell);
 bool sc_it_value(int_least16_t cell);
 int sc_AccumIniit(void);
