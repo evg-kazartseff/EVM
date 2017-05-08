@@ -14,8 +14,8 @@ include_directories(${MyTerm_SOURCE_DIR}/include)
 include_directories(${MyBigChars_SOURCE_DIR}/include)
 include_directories(${MyReadKey_SOURCE_DIR}/include)
 
-set(CF_HEADERS draw_interface.h handler.h IO_buffer.h signal.h alu.h)
-set(CF_SOURCES main.c draw_interface.c handler.c IO_buffer.c signal.c alu.c)
+set(CF_HEADERS draw_interface.h handler.h IO_buffer.h signal.h cpu.h)
+set(CF_SOURCES main.c draw_interface.c handler.c IO_buffer.c signal.c cpu.c)
 
 add_executable(${PROJECT_NAME} ${CF_HEADERS} ${CF_SOURCES})
 target_link_libraries(${PROJECT_NAME} MySimpleComputer MyTerm MyBigChars MyReadKey)

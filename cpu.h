@@ -13,10 +13,20 @@ typedef void *(* handler_command)(void *p);
 
 handler_command table_command[100];
 
+bool for_alu[100];
+
 void table_command_init();
 
 int alu(int command, int operand);
 int cu();
 
 void *READ(void *p);
+void *WRITE(void *p);
+
+void *LOAD(void *p);
+void *STORE(void *p);
+
+void *ADD(void *p);
+
+void *HALT(void *p);
 #endif //COMPUTER_ALU_H

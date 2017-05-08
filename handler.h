@@ -9,7 +9,7 @@
 #include "draw_interface.h"
 #include <signal.h>
 #include "signal.h"
-#include "alu.h"
+#include "cpu.h"
 
 void handler_run();
 void handler_step();

@@ -17,8 +17,7 @@ int32_t BigCharsArray[Num_BIG_CHAR * 2];
 
 
 typedef struct {
-    uint x;
-    uint y;
+    uint address;
     int replace_pointer;
 } pointer;
 pointer place_pointer;
@@ -28,8 +27,6 @@ uint x;
 uint y;
 } call_memory;
 call_memory place_cell_memory;
-
-int address_last_comand;
 
 int Load_BIG_CHARS(void);
 int fromArrayToBigChar(int32_t *big, char *arr);

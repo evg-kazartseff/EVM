@@ -290,6 +290,7 @@ void handler_step() {
     sc_regSet(FLAG_IGNORE_IMP, 1);
     draw_flag();
     cu();
+    draw_interface();
 }
 
 void handler_II() {

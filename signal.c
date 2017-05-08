@@ -18,6 +18,7 @@ void timer_handler(int sig) {
         return;
     }
     cu();
+    draw_interface();
 }
 
 

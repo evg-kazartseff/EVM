@@ -49,7 +49,7 @@ int draw_interface(void) {
         return ERR_SCREEN_SIZE;
     }
     Load_BIG_CHARS();
-    draw_operation(address_last_comand);
+    draw_operation(InctructionCounter);
     draw_memory(place_cell_memory.x, place_cell_memory.y);
     draw_accumulator();
     draw_instructionCounter();
@@ -77,8 +77,15 @@ int draw_memory(uint x_curent, uint y_current) {
                 mt_setfgcolor(clr_red);
 
             }
+            if ((i == InctructionCounter / 10) && (j == InctructionCounter % 10)) {
+                mt_setfgcolor(clr_blue);
+
+            }
             write(STDOUT_FILENO, buf,
                   strlen(buf));
+            if ((i == InctructionCounter / 10) && (j == InctructionCounter % 10)) {
+                mt_setfgcolor(clr_default);
+            }
             if ((i == x_curent) && (j == y_current)) {
                 mt_setbgcolor(clr_default);
                 mt_setfgcolor(clr_default);
@@ -124,7 +131,6 @@ int draw_accumulator(void) {
     mt_gotoXY(69, 2);
     char buf[6];
     print_memory_cell(buf, Accumulator);
-    //sprintf(buf, "+%.4x", Accumulator);
     write(STDOUT_FILENO, buf, 6);
     mt_gotoXY(66, 1);
     write(STDOUT_FILENO, "Accumulator", strlen("Accumulator"));
