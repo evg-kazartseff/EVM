@@ -296,10 +296,8 @@ void handler_step() {
 void handler_II() {
     int v;
     sc_regGet(FLAG_IGNORE_IMP, &v);
-    if (v == 0) {
-        sc_regSet(FLAG_IGNORE_IMP, 1);
-    } else if (v == 1) {
-        sc_regSet(FLAG_IGNORE_IMP, 0);
-    }
+    if (v == 1)
+        return;
+    sc_regSet(FLAG_IGNORE_IMP, 1);
     draw_flag();
 }

@@ -4,7 +4,6 @@
 
 #include "draw_interface.h"
 #include "handler.h"
-#include "cpu.h"
 
 int main() {
     sc_memoryInit();

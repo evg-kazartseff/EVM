@@ -27,6 +27,15 @@ void *LOAD(void *p);
 void *STORE(void *p);
 
 void *ADD(void *p);
+void *SUB(void *p);
+void *DIVIDE(void *p);
+void *MUL(void *p);
 
+void *JUMP(void *p);
+void *JNEG(void *p);
+void *JZ(void *p);
 void *HALT(void *p);
+
+void *NOT(void *p);
+void *AND(void *p);
 #endif //COMPUTER_ALU_H

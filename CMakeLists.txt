@@ -9,6 +9,9 @@ add_subdirectory(MyTerm)
 add_subdirectory(MyBigChars)
 add_subdirectory(MyReadKey)
 
+add_subdirectory(asm)
+add_subdirectory(basic)
+
 include_directories(${MySimpleComputer_SOURCE_DIR}/include)
 include_directories(${MyTerm_SOURCE_DIR}/include)
 include_directories(${MyBigChars_SOURCE_DIR}/include)
